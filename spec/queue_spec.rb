@@ -44,7 +44,7 @@ describe Queue do
 
     end
 
-    it "runs multiple jobs at same delay in order of add" do
+    it "runs multiple jobs in order as added" do
       blocks_called = []
       queue.add(2) do
         blocks_called << 2
@@ -58,6 +58,24 @@ describe Queue do
 
       queue.run
       blocks_called.should == [1, 2, 3]
+    end
+
+    it "runs multiple jobs at the specified delays" do
+      time_5 = nil
+      queue.add(5) { time_5 = Time.now }
+      time_2_0 = nil
+      queue.add(2) { time_2_0 = Time.now }
+      time_0 = nil
+      queue.add(0) { time_0 = Time.now }
+      time_2_1 = nil
+      queue.add(2) { time_2_1 = Time.now }
+      start_time = Time.now
+
+      queue.run
+      (time_0 - start_time).should be_within(0.05).of(0)
+      (time_2_0 - start_time).should be_within(0.05).of(2)
+      (time_2_1 - start_time).should be_within(0.05).of(2)
+      (time_5 - start_time).should be_within(0.05).of(5)
     end
   end
 
