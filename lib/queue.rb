@@ -5,12 +5,7 @@ class Queue
   end
 
   def add(delay=0, &block)
-
-    if @queue[delay].nil?
-      @queue[delay] = [block]
-    else
-      @queue[delay] << block
-    end
+    @queue[delay].nil?  ?  @queue[delay] = [block]  :  @queue[delay] << block
   end
 
   def run
